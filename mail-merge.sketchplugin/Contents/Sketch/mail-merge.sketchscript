@@ -1,0 +1,96 @@
+var replaceValues = function(string, values) {
+  var newString = string;
+
+  // ensure that the string has a tag in it
+  var matches = newString.match(/{\d+}/g)
+  if (matches == null) {
+    return string
+  }
+
+  for (var i=0; i < values.length; i++) {
+    var stringToken = "{"+(i+1)+"}";
+    newString = newString.replace(stringToken, values[i]);
+  }
+
+  return newString;
+}
+
+var parseUserInput = function(string) {
+  var values = []
+  var rows = string.split('\n')
+
+  for (var i=0; i < rows.length; i++) {
+    var rowText = rows[i]
+
+    if (rowText == "") {
+      continue
+    }
+    var rowValues = rowText.split(',')
+
+    values.push(rowValues)
+  }
+  //log(values)
+
+  return values
+}
+
+var createTextRequest = function(msg) {
+  var accessory = [[NSTextField alloc] initWithFrame:NSMakeRect(0,0,300,80)]
+
+  var alert = [[NSAlert alloc] init]
+  [alert setMessageText:msg]
+  [alert addButtonWithTitle:'OK']
+  [alert addButtonWithTitle:'Cancel']
+  [alert setAccessoryView:accessory]
+
+  var responseCode = [alert runModal]
+  var text = [accessory stringValue]
+
+  return [responseCode, text]
+}
+
+var onRun = function(context) {
+  var text = createTextRequest('What is the data?')
+  var rows = parseUserInput(text[1])
+
+  var template = context.selection[0];
+  var templateFrame = template.frame()
+
+  var templateWidth = templateFrame.width()
+  var templateHeight = templateFrame.height()
+
+  for (var rowId=0; rowId < rows.length; rowId++) {
+    var rowValues = rows[rowId];
+
+    // position and potentially name the group
+    var instance = template.duplicate();
+
+    var instanceFrame = instance.frame()
+    instanceFrame.addX((templateWidth + 30) * (rowId + 1))
+
+    // change the artboard/layer name
+    var newName = replaceValues(instance.name(), rowValues);
+    instance.setName(newName);
+
+    var labels = instance.children();
+
+    for (var labelId=0; labelId < labels.length(); labelId++) {
+      var label = labels[labelId];
+
+      if (! [label isKindOfClass:[MSTextLayer class]]) {
+        continue
+      }
+
+      var existingText = label.stringValue()
+      var newText = replaceValues(existingText, rowValues);
+
+      if (newText != existingText) {
+        label.setStringValue(newText)
+
+        // ensure that the label is refreshed
+        label.objectDidChange();
+        label.adjustFrameToFit();
+      }
+    }
+  }
+};

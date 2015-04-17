@@ -2,6 +2,9 @@
 
 Sketch plugin to merge CSV data with a template
 
+![Animation](https://raw.githubusercontent.com/kumo/sketch-mail-merge/master/docs/animation.gif)
+
+
 ## Usage
 
 Prepare a template and add numeric tags to your text, for example:

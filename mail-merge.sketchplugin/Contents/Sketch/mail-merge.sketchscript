@@ -50,6 +50,7 @@ var createTextRequest = function(msg) {
 }
 
 var onRun = function(context) {
+  var doc = context.document
   var text = createTextRequest('What is the data?')
   var rows = parseUserInput(text[1])
 
@@ -59,7 +60,11 @@ var onRun = function(context) {
   var templateWidth = templateFrame.width()
   var templateHeight = templateFrame.height()
 
-  for (var rowId=0; rowId < rows.length; rowId++) {
+  var numRows = rows.length
+
+  for (var rowId=0; rowId < numRows; rowId++) {
+    doc.showMessage("Progress: " + (rowId + 1)+"/"+numRows)
+
     var rowValues = rows[rowId];
 
     // position and potentially name the group

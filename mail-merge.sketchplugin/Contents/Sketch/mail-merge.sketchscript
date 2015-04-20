@@ -66,7 +66,7 @@ var onRun = function(context) {
     var instance = template.duplicate();
 
     var instanceFrame = instance.frame()
-    instanceFrame.addX((templateWidth + 30) * (rowId + 1))
+    instanceFrame.setX(instanceFrame.x() + (templateWidth + 100) * (rowId + 1))
 
     // change the artboard/layer name
     var newName = replaceValues(instance.name(), rowValues);
@@ -74,7 +74,7 @@ var onRun = function(context) {
 
     var labels = instance.children();
 
-    for (var labelId=0; labelId < labels.length(); labelId++) {
+    for (var labelId=0; labelId < labels.count(); labelId++) {
       var label = labels[labelId];
 
       if (! [label isKindOfClass:[MSTextLayer class]]) {

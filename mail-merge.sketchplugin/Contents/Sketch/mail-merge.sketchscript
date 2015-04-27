@@ -35,16 +35,31 @@ var parseUserInput = function(string) {
 }
 
 var createTextRequest = function(msg) {
-  var accessory = [[NSTextField alloc] initWithFrame:NSMakeRect(0,0,300,80)]
+
+  // scrollview
+  var scrollview = [[NSScrollView alloc] initWithFrame:NSMakeRect(0,0,300,80)];
+  contentSize = [scrollview contentSize];
+  [scrollview setBorderType:NSNoBorder];
+  [scrollview setHasVerticalScroller:1];
+  [scrollview setHasHorizontalScroller:0];
+  [scrollview setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+
+  // text view
+
+  var accessory = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,300,80)]
 
   var alert = [[NSAlert alloc] init]
   [alert setMessageText:msg]
   [alert addButtonWithTitle:'OK']
   [alert addButtonWithTitle:'Cancel']
-  [alert setAccessoryView:accessory]
+
+  // assemble
+  [scrollview setDocumentView:accessory];
+  [alert setAccessoryView:scrollview]
+
 
   var responseCode = [alert runModal]
-  var text = [accessory stringValue]
+  var text = [[accessory textStorage] string];
 
   return [responseCode, text]
 }
@@ -52,49 +67,85 @@ var createTextRequest = function(msg) {
 var onRun = function(context) {
   var doc = context.document
   var text = createTextRequest('What is the data?')
-  var rows = parseUserInput(text[1])
 
-  var template = context.selection[0];
-  var templateFrame = template.frame()
+  if (text[0] == 1000) {
+    var rows = parseUserInput(text[1])
 
-  var templateWidth = templateFrame.width()
-  var templateHeight = templateFrame.height()
+    var template = context.selection[0];
+    var templateFrame = template.frame()
 
-  var numRows = rows.length
+    var templateWidth = templateFrame.width()
+    var templateHeight = templateFrame.height()
 
-  for (var rowId=0; rowId < numRows; rowId++) {
-    doc.showMessage("Progress: " + (rowId + 1)+"/"+numRows)
+    var numRows = rows.length
 
-    var rowValues = rows[rowId];
+    var offsetX = 0;
+    var offsetY = 0;
 
-    // position and potentially name the group
-    var instance = template.duplicate();
+    switch (context.selection.count()) {
+      case 1:
+      offsetX = 20;
+        break;
+      case 2:
 
-    var instanceFrame = instance.frame()
-    instanceFrame.setX(instanceFrame.x() + (templateWidth + 100) * (rowId + 1))
+        var frameA = context.selection[0].frame();
+        var frameB = context.selection[1].frame();
 
-    // change the artboard/layer name
-    var newName = replaceValues(instance.name(), rowValues);
-    instance.setName(newName);
+        var frameA = context.selection[0].frame();
+        var frameB = context.selection[1].frame();
 
-    var labels = instance.children();
+        var deltaX = Math.abs(frameA.x() - frameB.x());
+        var deltaY = Math.abs(frameA.y() - frameB.y());
 
-    for (var labelId=0; labelId < labels.count(); labelId++) {
-      var label = labels[labelId];
+        if (deltaX > deltaY) {
+          offsetX = deltaX - frameA.width();
+          offsetY = 0;
+        } else {
+          offsetX = 0;
+          offsetY = deltaY - frameA.height();
+        }
 
-      if (! [label isKindOfClass:[MSTextLayer class]]) {
-        continue
-      }
+        template = context.selection[1];
+        break;
+      default:
+        break;
+    }
 
-      var existingText = label.stringValue()
-      var newText = replaceValues(existingText, rowValues);
+    for (var rowId=0; rowId < numRows; rowId++) {
+      doc.showMessage("Progress: " + (rowId + 1)+"/"+numRows)
 
-      if (newText != existingText) {
-        label.setStringValue(newText)
+      var rowValues = rows[rowId];
 
-        // ensure that the label is refreshed
-        label.objectDidChange();
-        label.adjustFrameToFit();
+      // position and potentially name the group
+      var instance = template.duplicate();
+
+      var instanceFrame = instance.frame()
+      if (offsetX > 0) instanceFrame.setX(instanceFrame.x() + (templateWidth + offsetX) * (rowId + 1))
+      if (offsetY > 0) instanceFrame.setY(instanceFrame.y() + (templateHeight + offsetY) * (rowId + 1))
+
+      // change the artboard/layer name
+      var newName = replaceValues(instance.name(), rowValues);
+      instance.setName(newName);
+
+      var labels = instance.children();
+
+      for (var labelId=0; labelId < labels.count(); labelId++) {
+        var label = labels[labelId];
+
+        if (! [label isKindOfClass:[MSTextLayer class]]) {
+          continue
+        }
+
+        var existingText = label.stringValue()
+        var newText = replaceValues(existingText, rowValues);
+
+        if (newText != existingText) {
+          label.setStringValue(newText)
+
+          // ensure that the label is refreshed
+          label.objectDidChange();
+          label.adjustFrameToFit();
+        }
       }
     }
   }

@@ -64,88 +64,104 @@ var createTextRequest = function(msg) {
   return [responseCode, text]
 }
 
+var setupLayout = function(context) {
+  var offsetX = 0;
+  var offsetY = 0;
+
+  switch (context.selection.count()) {
+    case 1:
+      offsetX = 20;
+      break;
+    case 2:
+      var frameA = context.selection[0].frame();
+      var frameB = context.selection[1].frame();
+
+      var deltaX = Math.abs(frameA.x() - frameB.x());
+      var deltaY = Math.abs(frameA.y() - frameB.y());
+
+      if (deltaX > deltaY) {
+        offsetX = deltaX - frameA.width();
+        offsetY = 0;
+      } else {
+        offsetX = 0;
+        offsetY = deltaY - frameA.height();
+      }
+
+      break;
+    default:
+      offsetX = 0;
+      break;
+  }
+
+  return [offsetX, offsetY]
+}
+
 var onRun = function(context) {
   var doc = context.document
+
+  var selectionCount = context.selection.count()
+  if (selectionCount == 0) {
+    doc.showMessage("Nothing selected.")
+    return
+  }
+
   var text = createTextRequest('What is the data?')
 
-  if (text[0] == 1000) {
-    var rows = parseUserInput(text[1])
+  if (text[0] != 1000) {
+    return
+  }
 
-    var template = context.selection[0];
-    var templateFrame = template.frame()
+  var rows = parseUserInput(text[1])
 
-    var templateWidth = templateFrame.width()
-    var templateHeight = templateFrame.height()
+  var template = context.selection[selectionCount - 1];
+  var templateFrame = template.frame()
 
-    var numRows = rows.length
+  var templateWidth = templateFrame.width()
+  var templateHeight = templateFrame.height()
 
-    var offsetX = 0;
-    var offsetY = 0;
+  var numRows = rows.length
 
-    switch (context.selection.count()) {
-      case 1:
-      offsetX = 20;
-        break;
-      case 2:
+  var offsetX = 0;
+  var offsetY = 0;
 
-        var frameA = context.selection[0].frame();
-        var frameB = context.selection[1].frame();
+  var offsets = setupLayout(context)
+  offsetX = offsets[0]
+  offsetY = offsets[1]
 
-        var frameA = context.selection[0].frame();
-        var frameB = context.selection[1].frame();
+  for (var rowId=0; rowId < numRows; rowId++) {
+    doc.showMessage("Progress: " + (rowId + 1)+"/"+numRows)
 
-        var deltaX = Math.abs(frameA.x() - frameB.x());
-        var deltaY = Math.abs(frameA.y() - frameB.y());
+    var rowValues = rows[rowId];
 
-        if (deltaX > deltaY) {
-          offsetX = deltaX - frameA.width();
-          offsetY = 0;
-        } else {
-          offsetX = 0;
-          offsetY = deltaY - frameA.height();
-        }
+    // position and potentially name the group
+    var instance = template.duplicate();
 
-        template = context.selection[1];
-        break;
-      default:
-        break;
-    }
+    var instanceFrame = instance.frame()
+    if (offsetX > 0) instanceFrame.setX(instanceFrame.x() + (templateWidth + offsetX) * (rowId + 1))
+    if (offsetY > 0) instanceFrame.setY(instanceFrame.y() + (templateHeight + offsetY) * (rowId + 1))
 
-    for (var rowId=0; rowId < numRows; rowId++) {
-      doc.showMessage("Progress: " + (rowId + 1)+"/"+numRows)
+    // change the artboard/layer name
+    var newName = replaceValues(instance.name(), rowValues);
+    instance.setName(newName);
 
-      var rowValues = rows[rowId];
+    var labels = instance.children();
 
-      // position and potentially name the group
-      var instance = template.duplicate();
+    for (var labelId=0; labelId < labels.count(); labelId++) {
+      var label = labels[labelId];
 
-      var instanceFrame = instance.frame()
-      if (offsetX > 0) instanceFrame.setX(instanceFrame.x() + (templateWidth + offsetX) * (rowId + 1))
-      if (offsetY > 0) instanceFrame.setY(instanceFrame.y() + (templateHeight + offsetY) * (rowId + 1))
+      if (! [label isKindOfClass:[MSTextLayer class]]) {
+        continue
+      }
 
-      // change the artboard/layer name
-      var newName = replaceValues(instance.name(), rowValues);
-      instance.setName(newName);
+      var existingText = label.stringValue()
+      var newText = replaceValues(existingText, rowValues);
 
-      var labels = instance.children();
+      if (newText != existingText) {
+        label.setStringValue(newText)
 
-      for (var labelId=0; labelId < labels.count(); labelId++) {
-        var label = labels[labelId];
-
-        if (! [label isKindOfClass:[MSTextLayer class]]) {
-          continue
-        }
-
-        var existingText = label.stringValue()
-        var newText = replaceValues(existingText, rowValues);
-
-        if (newText != existingText) {
-          label.setStringValue(newText)
-
-          // ensure that the label is refreshed
-          label.objectDidChange();
-          label.adjustFrameToFit();
-        }
+        // ensure that the label is refreshed
+        label.objectDidChange();
+        label.adjustFrameToFit();
       }
     }
   }

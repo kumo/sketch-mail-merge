@@ -79,13 +79,8 @@ var setupLayout = function(context) {
       var deltaX = Math.abs(frameA.x() - frameB.x());
       var deltaY = Math.abs(frameA.y() - frameB.y());
 
-      if (deltaX > deltaY) {
-        offsetX = deltaX - frameA.width();
-        offsetY = 0;
-      } else {
-        offsetX = 0;
-        offsetY = deltaY - frameA.height();
-      }
+      offsetX = deltaX - frameA.width();
+      offsetY = deltaY - frameA.height();
 
       break;
     default:
@@ -137,8 +132,8 @@ var onRun = function(context) {
     var instance = template.duplicate();
 
     var instanceFrame = instance.frame()
-    if (offsetX > 0) instanceFrame.setX(instanceFrame.x() + (templateWidth + offsetX) * (rowId + 1))
-    if (offsetY > 0) instanceFrame.setY(instanceFrame.y() + (templateHeight + offsetY) * (rowId + 1))
+    instanceFrame.setX(instanceFrame.x() + (templateWidth + offsetX) * (rowId + 1))
+    instanceFrame.setY(instanceFrame.y() + (templateHeight + offsetY) * (rowId + 1))
 
     // change the artboard/layer name
     var newName = replaceValues(instance.name(), rowValues);

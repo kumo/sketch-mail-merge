@@ -133,7 +133,9 @@ var onRun = function(context) {
 
     var instanceFrame = instance.frame()
     instanceFrame.setX(instanceFrame.x() + (templateWidth + offsetX) * (rowId + 1))
-    instanceFrame.setY(instanceFrame.y() + (templateHeight + offsetY) * (rowId + 1))
+    if (selectionCount == 2) {
+      instanceFrame.setY(instanceFrame.y() + (templateHeight + offsetY) * (rowId + 1))
+    }
 
     // change the artboard/layer name
     var newName = replaceValues(instance.name(), rowValues);

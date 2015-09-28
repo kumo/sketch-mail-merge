@@ -144,6 +144,10 @@ var onRun = function(context) {
     for (var labelId=0; labelId < labels.count(); labelId++) {
       var label = labels[labelId];
 
+      // change the label name
+      var newName = replaceValues(label.name(), rowValues);
+      label.setName(newName);
+
       if (! [label isKindOfClass:[MSTextLayer class]]) {
         continue
       }

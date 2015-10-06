@@ -25,7 +25,7 @@ var parseUserInput = function(string) {
     if (rowText == "") {
       continue
     }
-    var rowValues = rowText.split(/[\t,]/)
+    var rowValues = rowText.split(/[\t,;]/)
 
     values.push(rowValues)
   }

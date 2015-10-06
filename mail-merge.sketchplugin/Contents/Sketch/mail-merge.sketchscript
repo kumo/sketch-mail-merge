@@ -15,9 +15,40 @@ var replaceValues = function(string, values) {
   return newString;
 }
 
+// based on http://stackoverflow.com/questions/19053827/csv-separator-auto-detection-in-javascript
+var guessDelimiters = function(text, possibleDelimiters) {
+    var result = possibleDelimiters.filter(weedOut);
+
+    // make sure that we have found a delimiter, otherwise use default
+    if (result.length != 1) {
+      return /[\t,]/
+    } else {
+      return result
+    }
+
+    function weedOut (delimiter) {
+      var cache = -1;
+      return text.split('\n').every(checkLength);
+
+      function checkLength (line) {
+        if (!line) {
+          return true;
+        }
+
+        var length = line.split(delimiter).length;
+        if (cache < 0) {
+          cache = length;
+        }
+        return cache === length && length > 1;
+      }
+  }
+}
+
 var parseUserInput = function(string) {
   var values = []
   var rows = string.split('\n')
+
+  var separator = guessDelimiters( string, [",", ";", "\t"] )
 
   for (var i=0; i < rows.length; i++) {
     var rowText = rows[i]
@@ -25,7 +56,7 @@ var parseUserInput = function(string) {
     if (rowText == "") {
       continue
     }
-    var rowValues = rowText.split(/[\t,;]/)
+    var rowValues = rowText.split(separator)
 
     values.push(rowValues)
   }
@@ -154,6 +185,7 @@ var onRun = function(context) {
         continue
       }
 
+      // change the label text
       var existingText = label.stringValue()
       var newText = replaceValues(existingText, rowValues);
 

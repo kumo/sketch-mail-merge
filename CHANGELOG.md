@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## 1.0.6 - 2015-10-06
+### Changed
+- Input delimiter is automatically chosen based on input, and if nothing is found, the default comma and tab are used
+
 ## 1.0.5 - 2015-10-06
 ### Changed
 - Input can be split by semi-colon

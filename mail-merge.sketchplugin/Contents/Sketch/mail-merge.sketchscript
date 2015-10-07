@@ -15,6 +15,67 @@ var replaceValues = function(string, values) {
   return newString;
 }
 
+var replaceLayerValues = function(layer, values) {
+  var name = [layer name];
+
+  // ensure that the string has a tag in it
+  var matches = name.match(/{[a-z]+:\d+}/g)
+  if (matches == null) {
+    return
+  }
+
+  var exp = /{([a-z]+):(\d+)}/g
+  var match = exp.exec(name)
+
+  while (match != null) {
+  	print(match[1])
+  	print(match[2])
+
+    var matchValue = parseInt(match[2])
+    print(matchValue)
+    var colourValue = values[matchValue-1]
+    print(colourValue)
+
+    if (match[1] == "background") {
+      setBackgroundColour(layer, colourValue)
+    } else if (match[1] == "foreground") {
+      setTextColour(layer, colourValue)
+    }
+
+  	match = exp.exec(name)
+  }
+}
+
+var setBackgroundColour = function(layer, colour) {
+  var style = [layer style]
+  var fills = [style fills]
+
+  var newColour = MSColor.colorWithSVGString(colour)
+
+  var fillsArray = [fills array]
+  for(var i=0; i < [fillsArray length]; i++){
+    var fill = fillsArray[i]
+    var fillType = [fill fillType]
+
+    if (fillType == 0) {
+      fill.color = newColour
+    }
+  }
+}
+
+var setTextColour = function(layer, colour) {
+  if (! [label isKindOfClass:[MSTextLayer class]]) {
+    print("not a text layer")
+    return
+  }
+
+  print("changing text colour")
+  var newColour = MSColor.colorWithSVGString(colour)
+
+  layer.textColor = newColour
+  layer.objectDidChange();
+}
+
 // based on http://stackoverflow.com/questions/19053827/csv-separator-auto-detection-in-javascript
 var guessDelimiters = function(text, possibleDelimiters) {
     var result = possibleDelimiters.filter(weedOut);
@@ -180,6 +241,9 @@ var onRun = function(context) {
       // change the label name
       var newName = replaceValues(label.name(), rowValues);
       label.setName(newName);
+
+      // change colours
+      replaceLayerValues(label, rowValues)
 
       if (! [label isKindOfClass:[MSTextLayer class]]) {
         continue

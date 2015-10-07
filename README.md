@@ -6,7 +6,7 @@ Sketch plugin to merge CSV data with a template
 
 ## Usage
 
-Prepare a template and add numeric tags to your text, for example:
+Prepare a template and add numeric tags to your text, for example "Hello {1}":
 
 ![Template](https://raw.githubusercontent.com/kumo/sketch-mail-merge/master/docs/template.png)
 
@@ -22,11 +22,13 @@ Select the template and then choose the plugin `Mail Merge` from the menu. Paste
 
 ![Merged Result](https://raw.githubusercontent.com/kumo/sketch-mail-merge/master/docs/merged-result.png)
 
-If you want to layout the template vertically or have more choice over the distance between the results, then should create two templates and select both of them before using the plugin.
+### Advanced usage
+
+If you want to layout the template vertically or have more choice over the distance between the results, then you should create two templates and select both of them before using the plugin. The distance between the two templates will be applied to the new tempates.
 
 ### Notes
 
-- tags inside an artboard name will be mail merged too
+- if a layer's name contains tags, these too will be mail merged
 
 ## Installation
 

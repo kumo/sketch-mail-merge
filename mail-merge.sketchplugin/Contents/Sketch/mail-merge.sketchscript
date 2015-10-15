@@ -36,9 +36,9 @@ var replaceLayerValues = function(layer, values) {
     var colourValue = values[matchValue-1]
     print(colourValue)
 
-    if (match[1] == "background") {
-      setBackgroundColour(layer, colourValue)
-    } else if (match[1] == "foreground") {
+    if (match[1] == "fill") {
+      setFillColour(layer, colourValue)
+    } else if (match[1] == "text") {
       setTextColour(layer, colourValue)
     }
 
@@ -46,7 +46,7 @@ var replaceLayerValues = function(layer, values) {
   }
 }
 
-var setBackgroundColour = function(layer, colour) {
+var setFillColour = function(layer, colour) {
   var style = [layer style]
   var fills = [style fills]
 

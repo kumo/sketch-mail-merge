@@ -193,7 +193,7 @@ var onRun = function(context) {
         label.setStringValue(newText)
 
         // ensure that the label is refreshed
-        label.objectDidChange();
+        //label.objectDidChange();
         label.adjustFrameToFit();
       }
     }

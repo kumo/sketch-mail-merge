@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## 1.0.7 - 2016-05-30
+### Fixed
+- label.objectDidChange() is no longer available in Sketch 3.8 and it doesn't seem to be needed
+
 ## 1.0.6 - 2015-10-06
 ### Changed
 - Input delimiter is automatically chosen based on input, and if nothing is found, the default comma and tab are used

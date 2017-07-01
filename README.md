@@ -44,3 +44,7 @@ Ping me on [twitter](http://twitter.com/kumo) or follow for updates.
 ## Contributors
 
 - Florian Schulz (improved text input and customisable layout)
+
+## Like it? Great!
+
+If you find this plugin useful, consider [buying](https://paypal.me/dakegumo/5) me a cake (it goes very well with coffee!)

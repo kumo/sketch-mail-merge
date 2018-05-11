@@ -6,7 +6,7 @@ Sketch plugin to merge CSV data with a template
 
 ## Usage
 
-Prepare a template and add numeric tags to your text, for example "Hello {1}":
+Prepare a template and add numeric tags to your text. The first tag should start wih the number 1, for example "Hello {1}, do you '{2}'?":
 
 ![Template](https://raw.githubusercontent.com/kumo/sketch-mail-merge/master/docs/template.png)
 

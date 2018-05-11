@@ -131,13 +131,9 @@ var onRun = function(context) {
     return
   }
 
-  var text = createTextRequest('What is the data?')
+  var text = [doc askForUserInput:"What is the data?" initialValue:""];
 
-  if (text[0] != 1000) {
-    return
-  }
-
-  var rows = parseUserInput(text[1])
+  var rows = parseUserInput(text)
 
   var template = context.selection[selectionCount - 1];
   var templateFrame = template.frame()

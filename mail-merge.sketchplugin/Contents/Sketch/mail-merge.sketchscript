@@ -131,9 +131,12 @@ var onRun = function(context) {
     return
   }
 
-  var text = [doc askForUserInput:"What is the data?" initialValue:""];
+  //var text = [doc askForUserInput:"What is the data?" initialValue:""];
 
-  var rows = parseUserInput(text)
+  var pasteBoard = NSPasteboard.generalPasteboard();
+  var stringFromPasteBoard = [pasteBoard stringForType:NSPasteboardTypeString]
+
+  var rows = parseUserInput(stringFromPasteBoard)
 
   var template = context.selection[selectionCount - 1];
   var templateFrame = template.frame()

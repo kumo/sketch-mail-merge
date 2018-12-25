@@ -4,6 +4,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## 1.0.9 - 2018-12-24
+### Changed
+- Using the pasteboard rather than an input
+
+## 1.0.8 - 2018-05-11
+### Fixed
+- Using single line input because of problems on latest OSX
+
 ## 1.0.7 - 2016-05-30
 ### Fixed
 - label.objectDidChange() is no longer available in Sketch 3.8 and it doesn't seem to be needed

@@ -3,7 +3,7 @@
     "description": "Plugin to merge CSV and templates",
     "author": "Rob Clarke",
     "homepage": "http://github.com/kumo/sketch-mail-merge",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "identifier": "it.kumo.sketch.mail-merge",
     "compatibleVersion": 3.8,
     "bundleVersion": 1,

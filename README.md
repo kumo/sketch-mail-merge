@@ -18,7 +18,9 @@ dog,woof
 fox,???
 ```
 
-Select the template and then choose the plugin `Mail Merge` from the menu. Paste in the CSV format and you should see something like:
+Copy the CSV data so that it is in your clipboard.
+
+Select the template and then choose the plugin `Mail Merge` from the menu. You should see something like:
 
 ![Merged Result](https://raw.githubusercontent.com/kumo/sketch-mail-merge/master/docs/merged-result.png)
 

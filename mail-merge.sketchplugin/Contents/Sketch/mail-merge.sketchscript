@@ -50,6 +50,10 @@ var parseUserInput = function(string, delimiter) {
   var values = []
   var rows = string.split('\n')
 
+  //var separator = guessDelimiters( string, [",", ";", "\t"] )
+  // var separator = "\t";
+
+
   var separator;
   if ( delimiter ) {
     separator = delimiter;

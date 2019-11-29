@@ -1,3 +1,5 @@
+var UI = require('sketch/ui')
+
 var replaceValues = function(string, values) {
   var newString = string;
 
@@ -44,11 +46,17 @@ var guessDelimiters = function(text, possibleDelimiters) {
   }
 }
 
-var parseUserInput = function(string) {
+var parseUserInput = function(string, delimiter) {
   var values = []
   var rows = string.split('\n')
 
-  var separator = guessDelimiters( string, [",", ";", "\t"] )
+  var separator;
+  if ( delimiter ) {
+    separator = delimiter;
+  }
+  else {
+    separator = guessDelimiters( string, [",", ";", "\t"] )
+  }
 
   for (var i=0; i < rows.length; i++) {
     var rowText = rows[i]
@@ -122,7 +130,40 @@ var setupLayout = function(context) {
   return [offsetX, offsetY]
 }
 
-var onRun = function(context) {
+
+var onRunDelimiter = function(context) {
+  var dv = "\t";
+  UI.getInputFromUser(
+    "What delimiter?", {
+      type: UI.INPUT_TYPE.selection,
+      possibleValues: ['Tab', 'Comma', 'Semicolon']
+    },
+    (err, value) => {
+      if (err) {
+        // most likely the user canceled the input
+        return
+      }
+
+      switch (value) {
+        case "Tab":
+          dv = "\t";
+          break;
+        case "Comma":
+          dv = ",";
+          break;
+        case "Semicolon":
+          dv = ";";
+          break;
+      }
+
+      return onRun(context, dv)
+    }
+  );
+
+
+}
+
+var onRun = function(context, delimiter) {
   var doc = context.document
 
   var selectionCount = context.selection.count()
@@ -136,7 +177,7 @@ var onRun = function(context) {
   var pasteBoard = NSPasteboard.generalPasteboard();
   var stringFromPasteBoard = [pasteBoard stringForType:NSPasteboardTypeString]
 
-  var rows = parseUserInput(stringFromPasteBoard)
+  var rows = parseUserInput(stringFromPasteBoard, delimiter)
 
   var template = context.selection[selectionCount - 1];
   var templateFrame = template.frame()

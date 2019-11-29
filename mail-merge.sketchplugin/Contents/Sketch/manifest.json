@@ -3,24 +3,34 @@
     "description": "Plugin to merge CSV and templates",
     "author": "Rob Clarke",
     "homepage": "http://github.com/kumo/sketch-mail-merge",
-    "version": "1.0.9",
+    "version": "1.1",
     "identifier": "it.kumo.sketch.mail-merge",
     "compatibleVersion": 3.8,
     "bundleVersion": 1,
     "commands":
         [
           {
-            "name": "Mail Merge",
+            "name": "Mail Merge (auto detect delimiter)",
             "identifier": "mail-merge",
-            "script": "mail-merge.sketchscript"
+            "script": "mail-merge.sketchscript",
+            "handler": "onRun"
+          },
+          {
+            "name": "Mail Merge (specify delimiter)",
+            "identifier": "mail-merge-specify",
+            "script": "mail-merge.sketchscript",
+            "handler": "onRunDelimiter"
           }
         ],
     "menu":
         {
-          "items":
-          [
-            "mail-merge"
-          ],
-          "isRoot": true
+          "title": "Mail merge",
+          "items": [
+
+
+                "mail-merge",
+                "mail-merge-specify"
+              ]
+
         }
 }
